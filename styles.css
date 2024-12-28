@@ -1,10 +1,10 @@
 :root {
     --background-color: #FFFFFF;
-    --button-color: #272828;
+    --button-color: #909090;
     --element-background: #ebebeb;
     --input-background: #e5e5e5;
     --text-color: #000;
-    --border-color: #333;
+    --border-color: #BEBEBE;
     --button-text-color: #fff;
     --border-separator: #ddd;
 }
@@ -61,7 +61,7 @@ header {
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     border-radius: 0.2rem;
     width: 48em;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap; 
 }
 
 .gpaBox .Button-Box {
@@ -72,7 +72,7 @@ header {
 .gpaBox .Subject-Row {
     display: flex;
     flex-direction: row;
-    gap: 1rem;/* Allow wrapping on smaller screens */
+    gap: 1rem;
 }
 
 .gpaBox .Input-Box {
@@ -125,7 +125,7 @@ header {
     text-align: center;
     border-radius: 0.2rem;
     width: 48em;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap; 
 }
 
 table {
@@ -153,7 +153,6 @@ thead {
     z-index: 1;
 }
 
-/* Mobile Responsive Styles */
 @media (max-width: 768px) {
     .container {
         margin-left: 1rem;
@@ -162,7 +161,7 @@ thead {
 
     .gpaBox {
         width: 100%;
-        flex-direction: column; /* Stack vertically on small screens */
+        flex-direction: column; 
     }
 
     .gpaBox .Subject-Row {

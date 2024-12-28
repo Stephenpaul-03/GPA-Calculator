@@ -144,4 +144,3 @@ function calculateGPA() {
     `;
     document.getElementById('footer').innerHTML = footerHTML;
 }
-
