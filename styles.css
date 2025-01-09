@@ -153,6 +153,18 @@ thead {
     z-index: 1;
 }
 
+.grade{
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    background-color: var(--input-background);
+    color: var(--text-color);
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+}
+
 @media (max-width: 768px) {
     .container {
         margin-left: 1rem;
@@ -176,6 +188,10 @@ thead {
         align-self: center;
     }
 
+    .grade{
+        width: 85%;
+        align-self: center;
+    }
     .table-container {
         width: 100%;
         flex-direction: column;

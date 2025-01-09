@@ -23,7 +23,16 @@ function addSubject(createNew = true) {
     newSubjectRow.innerHTML = `
         <input type="text" placeholder="Name [Optional]" class="name">
         <input type="text" placeholder="Credits" class="credits">
-        <input type="text" placeholder="Grade" class="grade">
+        <select class="grade">
+            <option value="">Select Grade</option>
+            <option value="O">O</option>
+            <option value="A+">A+</option>
+            <option value="A">A</option>
+            <option value="B+">B+</option>
+            <option value="B">B</option>
+            <option value="C+">C+</option>
+            <option value="C">C</option>
+        </select>
     `;
     subjectsContainer.appendChild(newSubjectRow);
 
