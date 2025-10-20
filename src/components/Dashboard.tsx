@@ -1,161 +1,148 @@
-// src/components/Dashboard.tsx
-import { useEffect, useRef, useState } from "react";
-import {
-  Menubar,
-  MenubarContent,
-  MenubarMenu,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
+"use client";
+
+import { useState } from "react";
+import { Menubar, MenubarMenu } from "@/components/ui/menubar";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import Calculator from "@/components/Calculator";
 import Result from "@/components/Result";
 import type { GPAResults } from "@/components/Calculator_Logic";
-import { Mail, Github, Linkedin, BookMarked } from "lucide-react";
+import { Mail, Github, Linkedin } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "./theme_toggle/mode-toggle";
 import { ThemeProvider } from "./theme_toggle/theme-provider";
-import Presets from "@/components/Preset_Logic";
-
+import Presets from "@/components/Preset_Logic"; // this is your Presets.tsx file
 import { type Subject } from "@/components/SubjectRow";
-
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 const Dashboard = () => {
+  // calculator subjects
   const [subjects, setSubjects] = useState<Subject[]>(
-    Array(3).fill({ name: "", credits: "", grade: "" })
+    Array.from({ length: 10 }, (_, i) => ({
+      number: i + 1,
+      code: "",
+      semester: "",
+      name: "",
+      credits: "",
+      grade: "",
+    }))
   );
+
+  // GPA results
   const [results, setResults] = useState<GPAResults | null>(null);
-  const [semesters, setSemesters] = useState<string[]>([]);
+  const [open, setOpen] = useState(false);
 
-  const resultRef = useRef<HTMLDivElement | null>(null);
+  // Preset handling
+  const [parsedSubjects, setParsedSubjects] = useState<Subject[]>([]);
+  const [presetMode, setPresetMode] = useState(false);
+  const [parsedHasGrades, setParsedHasGrades] = useState(false);
 
-  useEffect(() => {
-    if (results && resultRef.current) {
-      resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [results]);
+  // When Presets finishes parsing or applying
+  const handlePresetsDone = (result: {
+    parsedSubjects: Subject[];
+    mode: "preset" | "apply";
+    hasGrades: boolean;
+  }) => {
+    const { parsedSubjects: data, mode, hasGrades } = result;
 
-  const toggleSemester = (sem: string) => {
-    if (semesters.includes(sem)) {
-      setSemesters(semesters.filter((s) => s !== sem));
+    if (mode === "apply") {
+      // Apply directly to calculator
+      setSubjects(
+        data.map((s, i) => ({
+          ...s,
+          number: i + 1,
+        }))
+      );
+      setParsedSubjects([]);
+      setPresetMode(false);
+      setParsedHasGrades(false);
+      toast("Uploaded data applied directly to calculator.");
     } else {
-      setSemesters([...semesters, sem]);
+      // Use as preset: show filter dropdown in calculator
+      setParsedSubjects(data);
+      setPresetMode(true);
+      setParsedHasGrades(hasGrades);
+      toast("Preset loaded. Use the filter to apply semesters.");
     }
   };
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="min-h-screen flex flex-col">
-        {/* Top Navigation */}
-        <div className="flex">
-          <Menubar className="w-fit m-2 mr-auto border transition-colors duration-300 hover:border-blue-500 dark:hover:border-yellow-500">
-            <MenubarMenu>
-              <MenubarTrigger className="w-fit gap-2 hover:text-blue-500 dark:hover:text-yellow-500 data-[state=open]:text-blue-500 data-[state=open]:dark:text-yellow-500 data-[state=open]:bg-transparent data-[state=open]:border-blue-500 data-[state=open]:dark:border-yellow-500 ">
-                <BookMarked className="w-4 h-4" />
-                Semester
-              </MenubarTrigger>
-              <MenubarContent align="start" className="w-fit !min-w-0 p-2 hover:border-blue-500 dark:hover:border-yellow-500">
-                {[
-                  "Semester 1",
-                  "Semester 2",
-                  "Semester 3",
-                  "Semester 4",
-                  "Semester 5",
-                  "Semester 6",
-                  "Semester 7",
-                  "Semester 8",
-                ].map((sem) => (
-                  <div
-                    key={sem}
-                    className="flex items-center gap-2 p-2 w-fit rounded-md cursor-pointer hover:text-blue-500 dark:hover:text-yellow-500"
-                  >
-                    <Checkbox
-                      id={sem}
-                      checked={semesters.includes(sem)}
-                      onCheckedChange={() => toggleSemester(sem)}
-                      className="
-                        data-[state=checked]:bg-blue-500
-                        data-[state=checked]:border-blue-500
-                        dark:data-[state=checked]:bg-yellow-500
-                        dark:data-[state=checked]:border-yellow-500
-                        text-white
-                      "
-                    />
-                    <Label htmlFor={sem} className="cursor-pointer">
-                      {sem}
-                    </Label>
-                  </div>
-                ))}
-              </MenubarContent>
-            </MenubarMenu>
-          </Menubar>
-
-          <Menubar className="w-fit m-2 ml-auto flex items-center gap-1">
+      <div className="min-h-screen flex flex-col bg-background">
+        {/* Header */}
+        <div className="absolute top-4 right-4">
+          <Menubar className="w-fit h-fit m-2 flex items-center rounded-full p-2 gap-1">
             <Button
-              variant="link"
+              variant="ghost"
               size="icon"
-              onClick={() => window.open("mailto:yourmail@gmail.com", "_blank")}
-              className="hover:text-red-500"
+              onClick={() =>
+                window.open("mailto:stephenpaul4040@gmail.com", "_blank")
+              }
+              className="hover:text-destructive rounded-full"
             >
               <Mail className="h-4 w-4" />
             </Button>
-
             <Button
-              variant="link"
+              variant="ghost"
               size="icon"
               onClick={() =>
-                window.open("https://github.com/yourusername", "_blank")
+                window.open("https://github.com/stephenpaul-03", "_blank")
               }
-              className="hover:text-gray-500"
+              className="hover:text-muted-foreground rounded-full"
             >
               <Github className="h-4 w-4" />
             </Button>
-
             <Button
-              variant="link"
+              variant="ghost"
               size="icon"
               onClick={() =>
-                window.open("https://linkedin.com/in/yourusername", "_blank")
+                window.open("https://linkedin.com/in/stephen-paul-i", "_blank")
               }
-              className="hover:text-blue-500"
+              className="hover:text-primary rounded-full"
             >
               <Linkedin className="h-4 w-4" />
             </Button>
-
-            <Separator orientation="vertical" className="bg-blue-500 dark:bg-yellow-500 h-6" />
-
+            <Separator
+              orientation="vertical"
+              className="h-6 bg-accent-foreground"
+            />
             <MenubarMenu>
               <ModeToggle />
             </MenubarMenu>
           </Menubar>
         </div>
 
-        {/* Calculator Section */}
-        <div className="flex flex-1 flex-col justify-center items-center py-8">
-          <div className="w-full max-w-4xl">
+        {/* Main Section */}
+        <div className="flex flex-1 flex-col justify-center items-center">
+          <div className="min-w-4xl items-center flex justify-center">
             <Calculator
               subjects={subjects}
               onSubjectsChange={setSubjects}
-              onResultsChange={setResults}
-              uploadButton={<Presets onSubjectsParsed={setSubjects} />}
+              onResultsChange={(res) => {
+                setResults(res);
+                setOpen(true);
+              }}
+              // upload button (icon) goes inside calculator toolbar
+              uploadButton={<Presets onDone={handlePresetsDone} />}
+              // preset props passed in
+              presetMode={presetMode}
+              parsedSubjects={parsedSubjects}
+              parsedHasGrades={parsedHasGrades}
             />
           </div>
         </div>
 
-        {/* Results Section */}
+        {/* Results Dialog */}
         {results && (
-          <div className="min-h-screen flex flex-col">
-            <div
-              ref={resultRef}
-              className="flex flex-1 flex-col justify-center items-center py-8"
-            >
-              <div className="w-full max-w-6xl sm:max-w-4xl">
-                <Result results={results} />
-              </div>
-            </div>
-          </div>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="max-w-6xl sm:max-w-4xl bg-background/95 backdrop-blur-2xl">
+              <Result results={results} />
+            </DialogContent>
+          </Dialog>
         )}
       </div>
+
+      <Toaster />
     </ThemeProvider>
   );
 };

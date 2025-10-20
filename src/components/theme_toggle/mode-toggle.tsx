@@ -11,10 +11,10 @@ export function ModeToggle() {
 
   return (
     <Button
-      variant="link"
+      variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="relative"
+      className="relative rounded-full"
     >
       <Sun className="h-[1.2rem] w-[1.2rem] text-blue-500 dark:hidden transition-all" />
       <Moon className="h-[1.2rem] w-[1.2rem] text-yellow-500 hidden dark:block transition-all" />
