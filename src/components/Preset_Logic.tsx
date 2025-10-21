@@ -168,7 +168,7 @@ const Presets: React.FC<PresetsProps> = ({ onDone }) => {
         <DialogTrigger asChild>
           <Button
             variant="ghost"
-            className="rounded-full h-10 w-10 dark:hover:text-teal-500"
+            className="rounded-full h-10 w-10 text-teal-400 hover:text-teal-800 transition-all"
           >
             <Upload className="h-4 w-4" />
           </Button>

@@ -32,7 +32,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
@@ -47,6 +46,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
 
 interface CalculatorProps {
   subjects: Subject[];
@@ -281,14 +281,16 @@ const Calculator: React.FC<CalculatorProps> = ({
         </Card>
 
         {/* Desktop Button Column */}
-        <div className="hidden md:flex flex-col justify-between">
+        <div className="flex flex-col justify-between">
           <Card className="flex flex-col justify-between items-center w-fit h-fit rounded-full p-0 py-1 m-0">
             <div className="flex flex-col relative px-1">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div>{uploadButton}</div>
                 </TooltipTrigger>
-                <TooltipContent side="right">Upload Excel</TooltipContent>
+                <TooltipContent color="teal" arrowColor="teal" side="right">
+                  Upload Excel
+                </TooltipContent>
               </Tooltip>
 
               {(presetMode || parsedSubjects.length > 0) &&
@@ -299,20 +301,22 @@ const Calculator: React.FC<CalculatorProps> = ({
                         <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
-                            className="rounded-full h-10 w-10"
+                            className="rounded-full h-10 w-10 text-blue-400 hover:text-blue-800 transition-all"
                           >
                             <Filter className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                       </TooltipTrigger>
-                      <TooltipContent side="right">
+                      <TooltipContent
+                        color="blue"
+                        arrowColor="blue"
+                        side="right"
+                      >
                         Select Semesters
                       </TooltipContent>
                     </Tooltip>
 
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>Available Semesters</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
+                    <DropdownMenuContent align="start" className="w-fit">
                       {availableSemesters.map((sem) => (
                         <DropdownMenuCheckboxItem
                           key={sem}
@@ -345,12 +349,14 @@ const Calculator: React.FC<CalculatorProps> = ({
                       addSubject();
                       toast("Subject Row Added.");
                     }}
-                    className="rounded-full h-10 w-10"
+                    className="rounded-full h-10 w-10 text-yellow-400 hover:text-yellow-800 transition-all"
                   >
                     <Plus />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">Add Subject</TooltipContent>
+                <TooltipContent color="yellow" arrowColor="yellow" side="right">
+                  Add Subject
+                </TooltipContent>
               </Tooltip>
 
               <Tooltip>
@@ -358,12 +364,14 @@ const Calculator: React.FC<CalculatorProps> = ({
                   <Button
                     variant="ghost"
                     onClick={showClearDialog}
-                    className="rounded-full h-10 w-10 hover:text-destructive"
+                    className="rounded-full h-10 w-10 text-red-400 hover:text-red-800 transition-all"
                   >
                     <CircleX className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">Clear All</TooltipContent>
+                <TooltipContent color="red" arrowColor="red" side="right">
+                  Clear All
+                </TooltipContent>
               </Tooltip>
 
               <Separator
@@ -377,14 +385,19 @@ const Calculator: React.FC<CalculatorProps> = ({
                     variant="ghost"
                     onClick={() => {
                       handleCalculate();
-                      toast("Result Calculated");
                     }}
-                    className="rounded-full h-10 w-10 hover:text-primary"
+                    className="rounded-full h-10 w-10 text-purple-400 hover:text-purple-800 transition-all"
                   >
                     <SquareEqual className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">Calculate</TooltipContent>
+                <TooltipContent
+                  color="primary"
+                  arrowColor="primary"
+                  side="right"
+                >
+                  Calculate
+                </TooltipContent>
               </Tooltip>
             </div>
           </Card>
@@ -396,123 +409,34 @@ const Calculator: React.FC<CalculatorProps> = ({
                   <Button
                     variant="ghost"
                     onClick={() => setShowHowToUse(true)}
-                    className="rounded-full h-10 w-10"
+                    className="rounded-full h-10 w-10 text-rose-400 hover:text-rose-800"
                   >
                     <Wrench />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">How to Use</TooltipContent>
+                <TooltipContent color="rose" arrowColor="rose" side="right">
+                  How to Use
+                </TooltipContent>
               </Tooltip>
 
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="rounded-full h-10 w-10"
+                    className="rounded-full h-10 w-10 text-emerald-400 hover:text-emerald-800"
                     onClick={() => setShowCalculationSteps(true)}
                   >
                     <CalculatorIcon className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">Calculation Steps</TooltipContent>
+                <TooltipContent
+                  color="emerald"
+                  arrowColor="emerald"
+                  side="right"
+                >
+                  Calculation Steps
+                </TooltipContent>
               </Tooltip>
-            </div>
-          </Card>
-        </div>
-
-        {/* Mobile Button Row */}
-        <div className="md:hidden flex flex-row justify-between gap-2">
-          <Card className="flex flex-row items-center w-fit rounded-full p-1">
-            <div className="flex flex-row gap-1">
-              {uploadButton}
-
-              {(presetMode || parsedSubjects.length > 0) &&
-                availableSemesters.length > 0 && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="rounded-full h-9 w-9">
-                        <Filter className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>Available Semesters</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      {availableSemesters.map((sem) => (
-                        <DropdownMenuCheckboxItem
-                          key={sem}
-                          onSelect={(e) => e.preventDefault()}
-                          checked={selectedSemesters.includes(sem)}
-                          onCheckedChange={(checked) => {
-                            setSelectedSemesters((prev) =>
-                              checked
-                                ? [...prev, sem]
-                                : prev.filter((s) => s !== sem)
-                            );
-                          }}
-                        >
-                          Semester {sem}
-                        </DropdownMenuCheckboxItem>
-                      ))}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleApplySemesters}>
-                        Apply
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  addSubject();
-                  toast("Subject Row Added.");
-                }}
-                className="rounded-full h-9 w-9"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-
-              <Button
-                variant="ghost"
-                onClick={showClearDialog}
-                className="rounded-full h-9 w-9 hover:text-destructive"
-              >
-                <CircleX className="h-4 w-4" />
-              </Button>
-
-              <Separator orientation="vertical" className="h-8 mx-1" />
-
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  handleCalculate();
-                  toast("Result Calculated");
-                }}
-                className="rounded-full h-9 w-9 hover:text-primary"
-              >
-                <SquareEqual className="h-4 w-4" />
-              </Button>
-            </div>
-          </Card>
-
-          <Card className="flex flex-row items-center w-fit rounded-full p-1">
-            <div className="flex flex-row gap-1">
-              <Button
-                variant="ghost"
-                onClick={() => setShowHowToUse(true)}
-                className="rounded-full h-9 w-9"
-              >
-                <Wrench className="h-4 w-4" />
-              </Button>
-
-              <Button
-                variant="ghost"
-                className="rounded-full h-9 w-9"
-                onClick={() => setShowCalculationSteps(true)}
-              >
-                <CalculatorIcon className="h-4 w-4" />
-              </Button>
             </div>
           </Card>
         </div>
@@ -556,139 +480,203 @@ const Calculator: React.FC<CalculatorProps> = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* How to Use Dialog */}
-      <Dialog open={showHowToUse} onOpenChange={setShowHowToUse}>
-        <DialogContent className="max-w-2xl sm:max-w-xl rounded-2xl bg-background/95 backdrop-blur-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-center">How to Use</DialogTitle>
-          </DialogHeader>
-
-          <Tabs defaultValue="withExcel" className="w-full mt-4">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="withExcel">With Excel</TabsTrigger>
-              <TabsTrigger value="withoutExcel">Without Excel</TabsTrigger>
-            </TabsList>
-
-            <TabsContent
-              value="withExcel"
-              className="space-y-2 mt-2 text-sm text-muted-foreground"
-            >
-              <ol className="list-decimal list-inside space-y-1">
-                <li>Click the Upload icon and select your Excel file.</li>
-                <li>
-                  If the file contains grades, choose "Use as Preset" to apply
-                  later or "Apply Directly" to populate immediately.
-                </li>
-                <li>
-                  If using as preset, open the semester filter icon to select
-                  which semesters to apply.
-                </li>
-                <li>
-                  Click the Calculate button to compute GPA for the applied
-                  semesters.
-                </li>
-                <li>You can add or delete subjects manually as needed.</li>
-              </ol>
-            </TabsContent>
-
-            <TabsContent
-              value="withoutExcel"
-              className="space-y-2 mt-2 text-sm text-muted-foreground"
-            >
-              <ol className="list-decimal list-inside space-y-1">
-                <li>Click the "+" icon to add a new subject row manually.</li>
-                <li>
-                  Fill in the subject name, credits, semester, and grade (if
-                  available).
-                </li>
-                <li>Repeat for all subjects you want to include.</li>
-                <li>Click the Calculate button to compute GPA.</li>
-                <li>
-                  You can clear all subjects with the "X" icon if you want to
-                  start over.
-                </li>
-              </ol>
-            </TabsContent>
-          </Tabs>
-
-          <DialogFooter>
-            <Button onClick={() => setShowHowToUse(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Calculation Steps Dialog */}
-      <Dialog
-        open={showCalculationSteps}
-        onOpenChange={setShowCalculationSteps}
+      <MathJaxContext
+        config={{
+          loader: { load: ["input/tex", "output/chtml"] },
+          tex: {
+            inlineMath: [["\\(", "\\)"]],
+            displayMath: [["\\[", "\\]"]],
+          },
+        }}
       >
-        <DialogContent className="max-w-2xl sm:max-w-xl rounded-2xl bg-background/95 backdrop-blur-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-center">
-              Calculation Steps
-            </DialogTitle>
-          </DialogHeader>
+        <>
+          {/* --- How to Use Dialog --- */}
+          <Dialog open={showHowToUse} onOpenChange={setShowHowToUse}>
+            <DialogContent className="max-w-2xl sm:max-w-xl rounded-2xl bg-gradient-to-b from-background/95 to-background/80 backdrop-blur-2xl shadow-2xl border border-border/40">
+              <DialogHeader>
+                <DialogTitle className="text-center text-xl font-semibold tracking-tight">
+                  How to Use
+                </DialogTitle>
+              </DialogHeader>
 
-          <Tabs defaultValue="withExcel" className="w-full mt-4">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="withExcel">With Excel</TabsTrigger>
-              <TabsTrigger value="withoutExcel">Without Excel</TabsTrigger>
-            </TabsList>
+              <Tabs defaultValue="withExcel" className="w-full mt-3">
+                <TabsList className="grid w-full grid-cols-3 mb-3">
+                  <TabsTrigger value="withExcel">With Excel</TabsTrigger>
+                  <TabsTrigger value="withoutExcel">Without Excel</TabsTrigger>
+                  <TabsTrigger value="Attributions">Attributions</TabsTrigger>
+                </TabsList>
 
-            <TabsContent
-              value="withExcel"
-              className="space-y-2 mt-2 text-sm text-muted-foreground"
-            >
-              <ol className="list-decimal list-inside space-y-1">
-                <li>
-                  Parse the Excel file to extract subjects, credits, semesters,
-                  and grades.
-                </li>
-                <li>Map each grade to its numeric value (O=10, A+=9, etc.).</li>
-                <li>Calculate per-subject score = credits × grade value.</li>
-                <li>Sum all valid credits and scores to get totals.</li>
-                <li>
-                  Group subjects by semester and compute semester GPA = total
-                  score ÷ total credits.
-                </li>
-                <li>Compute CGPA trend cumulatively across semesters.</li>
-                <li>
-                  Generate grade distribution and find max/min semester GPA.
-                </li>
-                <li>Return final GPAResults object with all details.</li>
-              </ol>
-            </TabsContent>
+                {/* --- With Excel --- */}
+                <TabsContent
+                  value="withExcel"
+                  className="text-sm text-muted-foreground space-y-3"
+                >
+                  <ol className="list-decimal list-inside space-y-3">
+                    <li>
+                      Click the{" "}
+                      <span className="text-teal-500 font-medium">
+                        Upload icon
+                      </span>{" "}
+                      and select your Excel file.
+                    </li>
+                    <li>
+                      If the file contains grades, choose{" "}
+                      <span className="text-teal-500 font-medium">
+                        Use as Preset
+                      </span>{" "}
+                      to save for later or{" "}
+                      <span className="text-teal-500 font-medium">
+                        Apply Directly
+                      </span>{" "}
+                      to load instantly.
+                    </li>
+                    <li>
+                      For presets, use the{" "}
+                      <span className="text-blue-500 font-medium">
+                        semester filter
+                      </span>{" "}
+                      icon to choose semesters.
+                    </li>
+                    <li>
+                      Click{" "}
+                      <span className="text-purple-500 font-medium">
+                        Calculate
+                      </span>{" "}
+                      to compute GPA.
+                    </li>
+                    <li>
+                      You can{" "}
+                      <span className="text-yellow-500 font-medium">add</span>{" "}
+                      or{" "}
+                      <span className="text-red-500 font-medium">delete</span>{" "}
+                      subjects manually.
+                    </li>
+                  </ol>
+                </TabsContent>
 
-            <TabsContent
-              value="withoutExcel"
-              className="space-y-2 mt-2 text-sm text-muted-foreground"
-            >
-              <ol className="list-decimal list-inside space-y-1">
-                <li>
-                  Manually enter subjects with semester, credits, and grades.
-                </li>
-                <li>Validate entered credits and grades.</li>
-                <li>Calculate per-subject score = credits × grade value.</li>
-                <li>Accumulate total credits and total score.</li>
-                <li>Compute semester-wise GPA and overall CGPA trend.</li>
-                <li>
-                  Generate grade distribution and identify max/min semester GPA.
-                </li>
-                <li>Display the results in the GPAResults structure.</li>
-              </ol>
-            </TabsContent>
-          </Tabs>
+                {/* --- Without Excel --- */}
+                <TabsContent
+                  value="withoutExcel"
+                  className="text-sm text-muted-foreground space-y-3"
+                >
+                  <ol className="list-decimal list-inside space-y-3">
+                    <li>
+                      Click{" "}
+                      <span className="text-yellow-500 font-medium">Add</span>{" "}
+                      to insert a subject row.
+                    </li>
+                    <li>
+                      Fill in name, credits, semester, and grade (if available).
+                    </li>
+                    <li>Repeat for each subject.</li>
+                    <li>
+                      Click{" "}
+                      <span className="text-purple-500 font-medium">
+                        Calculate
+                      </span>{" "}
+                      to get GPA.
+                    </li>
+                    <li>
+                      Use{" "}
+                      <span className="text-red-500 font-medium">
+                        Clear All
+                      </span>{" "}
+                      to reset everything.
+                    </li>
+                  </ol>
+                </TabsContent>
 
-          <DialogFooter>
-            <Button onClick={() => setShowCalculationSteps(false)}>
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+                <TabsContent
+                  value="Attributions"
+                  className="text-sm text-muted-foreground space-y-3"
+                >
+                  <ol className="list-disc list-inside space-y-3">
+                    <li>
+                      <a
+                        href="https://ui.shadcn.com/"
+                        title="Shad/cn"
+                      >
+                        Components from Shad/cn.
+                      </a>
+                    </li>
+                    <li>
+                    <a
+                      href="https://tweakcn.com/"
+                      title="Tweakcn"
+                    >
+                      Themes generated from Tweak/cn.
+                    </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://www.flaticon.com/free-icons/graduate"
+                        title="graduate icons"
+                      >
+                        Graduate icons created by Shakeel Ch. - Flaticon
+                      </a>
+                    </li>
+                  </ol>
+                </TabsContent>
+              </Tabs>
+
+              <DialogFooter>
+                <div className="mt-3 w-full bg-muted/20 text-xs text-muted-foreground px-3 py-2 rounded-lg border border-border/30">
+                  Each subject row can be deleted by double-clicking its index
+                  number.
+                </div>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* --- Calculation Steps Dialog --- */}
+          <Dialog
+            open={showCalculationSteps}
+            onOpenChange={setShowCalculationSteps}
+          >
+            <DialogContent className="max-w-2xl sm:max-w-xl rounded-2xl bg-gradient-to-b from-background/95 to-background/80 backdrop-blur-2xl shadow-2xl border border-border/40">
+              <DialogHeader>
+                <DialogTitle className="text-center text-xl font-semibold tracking-tight">
+                  Calculation Steps
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="text-sm text-muted-foreground mt-2 space-y-4">
+                <p>The GPA/CPA is calculated as follows:</p>
+                <ol className="list-decimal list-inside space-y-2">
+                  <li>
+                    Multiply each subject’s credits by its grade value to get
+                    the subject score.
+                  </li>
+                  <li>Sum up all subject scores and total credits.</li>
+                  <li>Divide total score by total credits.</li>
+                  <li>The final result is your GPA or CPA.</li>
+                </ol>
+
+                <Separator className="my-4" />
+
+                <div className="space-y-2 text-center font-medium text-foreground">
+                  <MathJax inline dynamic>
+                    {
+                      "\\( \\text{Subject Score} = \\text{Credits} \\times \\text{Grade Value} \\)"
+                    }
+                  </MathJax>
+                  <MathJax dynamic>
+                    {
+                      "\\[ \\text{GPA} = \\frac{\\sum (\\text{Credits} \\times \\text{Grade Value})}{\\sum \\text{Credits}} \\]"
+                    }
+                  </MathJax>
+                </div>
+
+                <div className="bg-muted/20 text-xs text-muted-foreground px-3 py-2 rounded-lg border border-border/30 mt-4">
+                  Note: The calculator uses a 10-point grading scale.
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
+      </MathJaxContext>
     </>
   );
 };
 
-export default Calculator
+export default Calculator;

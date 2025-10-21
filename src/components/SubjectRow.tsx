@@ -60,7 +60,6 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
 
   const rowRef = useRef<HTMLDivElement>(null);
 
-  // Detect click outside to cancel delete mode
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (rowRef.current && !rowRef.current.contains(event.target as Node)) {
@@ -76,10 +75,8 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
 
   const handleIndexClick = () => {
     if (!deleteMode) {
-      // First click: enter delete mode
       setDeleteMode(true);
     } else {
-      // Second click: check if row has content
       const hasContent =
         (subject.code && subject.code.trim() !== "") ||
         (subject.name && subject.name.trim() !== "") ||
@@ -88,7 +85,6 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
         (subject.semester && subject.semester !== "");
 
       if (hasContent) {
-        // Show confirmation dialog if row has content
         if (skipConfirmCount > 0) {
           deleteSubject(index);
           setSkipConfirmCount((c) => c - 1);
@@ -97,7 +93,6 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
           setOpenDelete(true);
         }
       } else {
-        // Delete immediately if row is empty
         deleteSubject(index);
         setDeleteMode(false);
       }
@@ -105,14 +100,8 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
   };
 
   const interactiveStyle = cn(
-    "outline-none relative border border-input rounded-full",
-    "transition-colors duration-200 ease-in",
-    // "focus:border-foreground",
-    // "focus:ring-1 focus:ring-ring",
-    // "focus:ring-offset-0",
-    // "focus-visible:border-foreground",
-    // "focus-visible:ring-1 focus-visible:ring-ring",
-    // "focus-visible:ring-offset-0"
+    "outline-none relative border border-input rounded-full transition-all duration-200 ease-in",
+    "hover:border-primary focus:border-[4px] focus:border-primary"
   );
 
   return (
@@ -120,31 +109,30 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
       <div
         ref={rowRef}
         className={cn(
-          "subject-row interactive-top-bottom grid items-center p-1 select-none gap-3 max-w-4xl",
+          "subject-row grid items-center p-1 select-none gap-3 max-w-4xl",
           "grid-cols-[40px_60px_minmax(120px,1fr)_minmax(120px,2fr)_minmax(64px,96px)_minmax(98px,98px)]",
           "sm:grid-cols-[40px_80px_minmax(140px,1fr)_minmax(160px,2fr)_minmax(72px,100px)_minmax(100px,100px)]"
         )}
       >
-        {/* 1. Index (click to toggle delete mode) */}
         <Tooltip>
           <TooltipTrigger asChild>
             <div
               className={cn(
-                "flex items-center justify-center h-9 w-9 rounded-full text-sm cursor-pointer select-none transition-all duration-200 border bg-accent",
+                "flex items-center justify-center h-9 w-9 rounded-full text-sm cursor-pointer select-none transition-all duration-200 border bg-accent text-accent-foreground hover:border-red-400",
                 deleteMode
                   ? "bg-destructive/10 text-destructive border-destructive/20"
-                  : "text-muted-foreground"
+                  : ""
               )}
               onClick={handleIndexClick}
             >
               {deleteMode ? <Trash2 className="h-4 w-4" /> : index + 1}
             </div>
           </TooltipTrigger>
-          <TooltipContent side="left">
+          <TooltipContent color="red" arrowColor="red" side="left">
             <p>Double-click to delete</p>
           </TooltipContent>
         </Tooltip>
-        {/* 2. Semester */}
+
         <Select
           value={subject.semester}
           onValueChange={(val) => updateSubject(index, "semester", val)}
@@ -154,14 +142,17 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
           </SelectTrigger>
           <SelectContent className="p-0">
             {semesters.map((sem) => (
-              <SelectItem key={sem} value={sem}>
+              <SelectItem
+                key={sem}
+                value={sem}
+                className="data-[highlighted]:bg-primary data-[highlighted]:text-accent-foreground"
+              >
                 {sem}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
 
-        {/* 3. Subject Code */}
         <Input
           value={subject.code}
           onChange={(e) => updateSubject(index, "code", e.target.value)}
@@ -169,7 +160,6 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
           className={cn("w-full h-10 text-center", interactiveStyle)}
         />
 
-        {/* 4. Subject Name */}
         <Input
           value={subject.name}
           onChange={(e) => updateSubject(index, "name", e.target.value)}
@@ -177,7 +167,6 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
           className={cn("w-full h-10", interactiveStyle)}
         />
 
-        {/* 5. Credits */}
         <Input
           type="number"
           value={subject.credits}
@@ -191,7 +180,6 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
           )}
         />
 
-        {/* 6. Grade */}
         <Select
           value={subject.grade}
           onValueChange={(val) => updateSubject(index, "grade", val)}
@@ -206,7 +194,11 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
           </SelectTrigger>
           <SelectContent className="w-[var(--radix-select-trigger-width)]">
             {grades.map((g) => (
-              <SelectItem key={g} value={g}>
+              <SelectItem
+                key={g}
+                value={g}
+                className="data-[highlighted]:bg-primary data-[highlighted]:text-accent-foreground"
+              >
                 {g}
               </SelectItem>
             ))}
@@ -214,7 +206,6 @@ const SubjectRow: React.FC<SubjectRowProps> = ({
         </Select>
       </div>
 
-      {/* Confirm Delete Dialog */}
       <AlertDialog open={openDelete} onOpenChange={setOpenDelete}>
         <AlertDialogContent>
           <AlertDialogHeader>
