@@ -1,8 +1,8 @@
-# GPA Calculator v3
+# GPA Calculator
 
 ## Description
 
-Welcome to **GPA Calculator v3** – the upgraded, hopefully-final version of your go-to tool for calculating GPA/CGPA on a 10-point scale. Built using **React + Vite + TypeScript + TailwindCSS + Shad/cn**, this version makes GPA calculation faster and easier with **Excel sheet presets**.
+Welcome to **GPA Calculator ** – your go-to tool for calculating GPA/CGPA on a 10-point scale. Built using **React + Vite + TypeScript + TailwindCSS + Shad/cn**, making GPA calculation faster and easier with **Excel sheet presets**.
 
 > Quick tip: How to use the calculator and how GPA is calculated? Check the info **on the site, at the bottom-right of the calculator**. Super handy if you’re new here.
 
@@ -44,10 +44,10 @@ Done! You can also calculate **CGPA** across multiple semesters. Easy.
 
 ```bash
 # Clone the repo
-git clone https://github.com/Stephenpaul-03/GPA-Calculator-v3.git
+git clone https://github.com/Stephenpaul-03/GPA-Calculator.git
 
 # Go to the project folder
-cd GPA-Calculator-v3
+cd GPA-Calculator
 
 # Install dependencies
 npm install
