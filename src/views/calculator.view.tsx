@@ -1,8 +1,6 @@
-"use client";
-
-import React, { useMemo, useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import React from "react"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import {
   Plus,
   SquareEqual,
@@ -10,8 +8,9 @@ import {
   Wrench,
   Calculator as CalculatorIcon,
   Filter,
-} from "lucide-react";
-import SubjectRow, { type Subject } from "../components/SubjectRow";
+} from "lucide-react"
+import SubjectRow from "@/containers/subjectRow.container"
+import type { Subject } from "@/types/subjectRow.types"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,12 +20,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@/components/ui/alert-dialog"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/tooltip"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,235 +33,65 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuSeparator,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { toast } from "sonner";
-import { calculateGPA, type GPAResults } from "@/components/Calculator_Logic";
-import { Separator } from "./ui/separator";
+} from "@/components/ui/dropdown-menu"
+import { Separator } from "@/components/ui/separator"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { MathJax, MathJaxContext } from "better-react-mathjax";
+} from "@/components/ui/dialog"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { MathJax, MathJaxContext } from "better-react-mathjax"
+import type { AlertConfig } from "@/types/calculator.types"
 
-interface CalculatorProps {
-  subjects: Subject[];
-  onSubjectsChange: (subjects: Subject[]) => void;
-  onResultsChange?: (results: GPAResults | null) => void;
-  uploadButton?: React.ReactNode;
-  presetMode?: boolean;
-  parsedSubjects?: Subject[];
-  parsedHasGrades?: boolean;
+type Props = {
+  subjects: Subject[]
+  uploadButton?: React.ReactNode
+  presetMode: boolean
+  parsedSubjects: Subject[]
+
+  availableSemesters: string[]
+  selectedSemesters: string[]
+  setSelectedSemesters: (v: string[]) => void
+
+  onAdd: () => void
+  onDelete: (index: number) => void
+  onUpdate: (index: number, field: keyof Subject, value: string) => void
+  onCalculate: () => void
+  onApplySemesters: () => void
+  onClear: () => void
+  alertConfig: AlertConfig | null
+  setAlertConfig: (v: AlertConfig | null) => void
+
+  showHowToUse: boolean
+  setShowHowToUse: (v: boolean) => void
+  showCalculationSteps: boolean
+  setShowCalculationSteps: (v: boolean) => void
 }
 
-type AlertConfig = {
-  title: string;
-  description: string;
-  actions: {
-    label: string;
-    onClick: () => void;
-    variant?: "default" | "destructive";
-  }[];
-};
-
-const Calculator: React.FC<CalculatorProps> = ({
+export function CalculatorView({
   subjects,
-  onSubjectsChange,
-  onResultsChange,
   uploadButton,
-  presetMode = false,
-  parsedSubjects = [],
-}) => {
-  const [_, setResults] = useState<GPAResults | null>(null);
-  const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
-  const [selectedSemesters, setSelectedSemesters] = useState<string[]>([]);
-  const [showHowToUse, setShowHowToUse] = useState(false);
-  const [showCalculationSteps, setShowCalculationSteps] = useState(false);
-
-  const addSubject = () =>
-    onSubjectsChange([
-      ...subjects,
-      {
-        number: subjects.length + 1,
-        code: "",
-        semester: "",
-        name: "",
-        credits: "",
-        grade: "",
-      },
-    ]);
-
-  const deleteSubject = (index: number) =>
-    onSubjectsChange(subjects.filter((_, i) => i !== index));
-
-  const updateSubject = (
-    index: number,
-    field: keyof Subject,
-    value: string
-  ) => {
-    onSubjectsChange(
-      subjects.map((subj, i) =>
-        i === index ? { ...subj, [field]: value } : subj
-      )
-    );
-  };
-
-  const handleCalculate = () => {
-    const { results, error } = calculateGPA(subjects);
-    if (error) {
-      setAlertConfig({
-        title: "Error",
-        description: error.message,
-        actions: [
-          {
-            label: "OK",
-            onClick: () => setAlertConfig(null),
-          },
-        ],
-      });
-    }
-    if (results) {
-      setResults(results);
-      onResultsChange?.(results);
-    }
-  };
-
-  const handleClear = () => {
-    onSubjectsChange(
-      Array.from({ length: 10 }, (_, i) => ({
-        number: i + 1,
-        code: "",
-        semester: "",
-        name: "",
-        credits: "",
-        grade: "",
-      }))
-    );
-    setResults(null);
-    onResultsChange?.(null);
-    setAlertConfig(null);
-  };
-
-  const showClearDialog = () => {
-    setAlertConfig({
-      title: "Clear All Subjects?",
-      description:
-        "This will reset all subject data to empty fields. This action cannot be undone.",
-      actions: [
-        {
-          label: "Cancel",
-          onClick: () => setAlertConfig(null),
-        },
-        {
-          label: "Clear All",
-          onClick: () => {
-            handleClear();
-            toast("Subjects Cleared");
-          },
-          variant: "destructive",
-        },
-      ],
-    });
-  };
-
-  const availableSemesters = useMemo(() => {
-    const setSem = new Set<string>();
-    parsedSubjects.forEach((s) => {
-      if (s.semester) setSem.add(s.semester);
-    });
-    return Array.from(setSem).sort((a, b) => Number(a) - Number(b));
-  }, [parsedSubjects]);
-
-  const findMissingSemesters = (selected: string[]) => {
-    if (selected.length === 0) return [];
-    const arr = selected.map(Number).sort((a, b) => a - b);
-    const missing: number[] = [];
-    for (let n = arr[0]; n <= arr[arr.length - 1]; n++) {
-      if (!arr.includes(n)) missing.push(n);
-    }
-    return missing;
-  };
-
-  const handleApplySemesters = () => {
-    if (!selectedSemesters.length) {
-      toast("Select at least one semester to apply.");
-      return;
-    }
-
-    const missing = findMissingSemesters(selectedSemesters);
-    if (missing.length > 0) {
-      toast.warning(
-        `Missing semesters: ${missing.join(
-          ", "
-        )}. You can still apply if you want.`
-      );
-    }
-
-    const toApply = parsedSubjects.filter((s) =>
-      selectedSemesters.includes(s.semester)
-    );
-
-    if (toApply.length === 0) {
-      toast("No rows found for selected semesters.");
-      return;
-    }
-
-    const existingHasData = subjects.some(
-      (s) => s.code || s.name || s.credits || s.grade
-    );
-
-    if (existingHasData) {
-      showApplyDialog(toApply);
-      return;
-    }
-
-    onSubjectsChange(toApply);
-    toast("Semester data applied.");
-    setSelectedSemesters([]);
-  };
-
-  const showApplyDialog = (toApply: Subject[]) => {
-    setAlertConfig({
-      title: "Existing Data Found",
-      description:
-        "Calculator already has data. Do you want to replace it with the applied semester data or append the new rows?",
-      actions: [
-        {
-          label: "Cancel",
-          onClick: () => setAlertConfig(null),
-        },
-        {
-          label: "Replace Data",
-          onClick: () => confirmApply(toApply, true),
-        },
-        {
-          label: "Append Rows",
-          onClick: () => confirmApply(toApply, false),
-        },
-      ],
-    });
-  };
-
-  const confirmApply = (toApply: Subject[], replace: boolean) => {
-    if (replace) {
-      onSubjectsChange(toApply);
-      toast("Replaced with applied semester data.");
-    } else {
-      const merged = [
-        ...subjects,
-        ...toApply.map((s, i) => ({ ...s, number: subjects.length + i + 1 })),
-      ];
-      onSubjectsChange(merged);
-      toast("Appended applied semester data.");
-    }
-
-    setAlertConfig(null);
-    setSelectedSemesters([]);
-  };
-
+  presetMode,
+  parsedSubjects,
+  availableSemesters,
+  selectedSemesters,
+  setSelectedSemesters,
+  onAdd,
+  onDelete,
+  onUpdate,
+  onCalculate,
+  onApplySemesters,
+  onClear,
+  alertConfig,
+  setAlertConfig,
+  showHowToUse,
+  setShowHowToUse,
+  showCalculationSteps,
+  setShowCalculationSteps,
+}: Props) {
   return (
     <>
       <div className="w-full h-full flex flex-col md:flex-row gap-3">
@@ -273,8 +102,8 @@ const Calculator: React.FC<CalculatorProps> = ({
                 key={idx}
                 index={idx}
                 subject={subj}
-                updateSubject={updateSubject}
-                deleteSubject={deleteSubject}
+                updateSubject={onUpdate}
+                deleteSubject={onDelete}
               />
             ))}
           </div>
@@ -323,18 +152,18 @@ const Calculator: React.FC<CalculatorProps> = ({
                           onSelect={(e) => e.preventDefault()}
                           checked={selectedSemesters.includes(sem)}
                           onCheckedChange={(checked) => {
-                            setSelectedSemesters((prev) =>
+                            setSelectedSemesters(
                               checked
-                                ? [...prev, sem]
-                                : prev.filter((s) => s !== sem)
-                            );
+                                ? [...selectedSemesters, sem]
+                                : selectedSemesters.filter((s) => s !== sem)
+                            )
                           }}
                         >
                           Semester {sem}
                         </DropdownMenuCheckboxItem>
                       ))}
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleApplySemesters}>
+                      <DropdownMenuItem onClick={onApplySemesters}>
                         Apply
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -345,10 +174,7 @@ const Calculator: React.FC<CalculatorProps> = ({
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    onClick={() => {
-                      addSubject();
-                      toast("Subject Row Added.");
-                    }}
+                    onClick={onAdd}
                     className="rounded-full h-10 w-10 text-yellow-400 hover:text-yellow-800 transition-all"
                   >
                     <Plus />
@@ -363,7 +189,7 @@ const Calculator: React.FC<CalculatorProps> = ({
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    onClick={showClearDialog}
+                    onClick={onClear}
                     className="rounded-full h-10 w-10 text-red-400 hover:text-red-800 transition-all"
                   >
                     <CircleX className="h-4 w-4" />
@@ -383,9 +209,7 @@ const Calculator: React.FC<CalculatorProps> = ({
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    onClick={() => {
-                      handleCalculate();
-                    }}
+                    onClick={onCalculate}
                     className="rounded-full h-10 w-10 text-purple-400 hover:text-purple-800 transition-all"
                   >
                     <SquareEqual className="h-4 w-4" />
@@ -461,7 +285,7 @@ const Calculator: React.FC<CalculatorProps> = ({
                   <AlertDialogCancel key={idx} onClick={action.onClick}>
                     {action.label}
                   </AlertDialogCancel>
-                );
+                )
               }
               return (
                 <AlertDialogAction
@@ -475,11 +299,12 @@ const Calculator: React.FC<CalculatorProps> = ({
                 >
                   {action.label}
                 </AlertDialogAction>
-              );
+              )
             })}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
       <MathJaxContext
         config={{
           loader: { load: ["input/tex", "output/chtml"] },
@@ -505,7 +330,6 @@ const Calculator: React.FC<CalculatorProps> = ({
                   <TabsTrigger value="withoutExcel">Without Excel</TabsTrigger>
                   <TabsTrigger value="Attributions">Attributions</TabsTrigger>
                 </TabsList>
-
                 {/* --- With Excel --- */}
                 <TabsContent
                   value="withExcel"
@@ -586,6 +410,7 @@ const Calculator: React.FC<CalculatorProps> = ({
                   </ol>
                 </TabsContent>
 
+                {/* --- Attributions --- */}
                 <TabsContent
                   value="Attributions"
                   className="text-sm text-muted-foreground space-y-3"
@@ -600,12 +425,12 @@ const Calculator: React.FC<CalculatorProps> = ({
                       </a>
                     </li>
                     <li>
-                    <a
-                      href="https://tweakcn.com/"
-                      title="Tweakcn"
-                    >
-                      Themes generated from Tweak/cn.
-                    </a>
+                      <a
+                        href="https://tweakcn.com/"
+                        title="Tweakcn"
+                      >
+                        Themes generated from Tweak/cn.
+                      </a>
                     </li>
                     <li>
                       <a
@@ -676,7 +501,5 @@ const Calculator: React.FC<CalculatorProps> = ({
         </>
       </MathJaxContext>
     </>
-  );
-};
-
-export default Calculator;
+  )
+}

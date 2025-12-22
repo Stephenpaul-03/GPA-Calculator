@@ -52,7 +52,7 @@ function TooltipContent({
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          "base-tooltip-styles z-50 w-fit rounded-md px-3 py-1.5 text-xs text-balance",
+          "base-tooltip-styles z-9999 w-fit rounded-md px-3 py-1.5 text-xs text-balance",
           colorClass,
           className
         )}

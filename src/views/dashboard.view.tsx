@@ -1,61 +1,45 @@
-"use client";
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Card } from "@/components/ui/card"
+import { Toaster } from "@/components/ui/sonner"
+import { Mail, Github, Linkedin } from "lucide-react"
+import Calculator from "@/containers/calculator.container"
+import Result from "@/containers/results.container"
+import { ModeToggle } from "@/components/theme/mode-toggle"
+import { ThemeProvider } from "@/components/theme/theme-provider"
+import type { Subject } from "@/types/subjectRow.types"
+import type { GPAResults } from "@/types/gpa.types"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import Calculator from "@/components/Calculator";
-import Result from "@/components/Result";
-import type { GPAResults } from "@/components/Calculator_Logic";
-import { Mail, Github, Linkedin } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { ModeToggle } from "./theme_toggle/mode-toggle";
-import { ThemeProvider } from "./theme_toggle/theme-provider";
-import Presets from "@/components/Preset_Logic"; 
-import { type Subject } from "@/components/SubjectRow";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Toaster } from "@/components/ui/sonner";
-import { Card } from "./ui/card";
-const Dashboard = () => {
-  const [subjects, setSubjects] = useState<Subject[]>(
-    Array.from({ length: 10 }, (_, i) => ({
-      number: i + 1,
-      code: "",
-      semester: "",
-      name: "",
-      credits: "",
-      grade: "",
-    }))
-  );
+type Props = {
+  subjects: Subject[]
+  setSubjects: (s: Subject[]) => void
 
-  const [results, setResults] = useState<GPAResults | null>(null);
-  const [open, setOpen] = useState(false);
-  const [parsedSubjects, setParsedSubjects] = useState<Subject[]>([]);
-  const [presetMode, setPresetMode] = useState(false);
-  const [parsedHasGrades, setParsedHasGrades] = useState(false);
+  results: GPAResults | null
+  setResults: (r: GPAResults | null) => void
 
-  const handlePresetsDone = (result: {
-    parsedSubjects: Subject[];
-    mode: "preset" | "apply";
-    hasGrades: boolean;
-  }) => {
-    const { parsedSubjects: data, mode, hasGrades } = result;
+  open: boolean
+  setOpen: (v: boolean) => void
 
-    if (mode === "apply") {
-      setSubjects(
-        data.map((s, i) => ({
-          ...s,
-          number: i + 1,
-        }))
-      );
-      setParsedSubjects([]);
-      setPresetMode(false);
-      setParsedHasGrades(false);
-    } else {
-      setParsedSubjects(data);
-      setPresetMode(true);
-      setParsedHasGrades(hasGrades);
-    }
-  };
+  parsedSubjects: Subject[]
+  presetMode: boolean
+  parsedHasGrades: boolean
 
+  uploadButton: React.ReactNode
+}
+
+export function DashboardView({
+  subjects,
+  setSubjects,
+  results,
+  setResults,
+  open,
+  setOpen,
+  parsedSubjects,
+  presetMode,
+  parsedHasGrades,
+  uploadButton,
+}: Props) {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className="min-h-screen flex flex-col bg-background">
@@ -72,6 +56,7 @@ const Dashboard = () => {
             >
               <Mail className="h-4 w-4" />
             </Button>
+
             <Button
               variant="ghost"
               size="icon"
@@ -82,23 +67,27 @@ const Dashboard = () => {
             >
               <Github className="h-4 w-4" />
             </Button>
+
             <Button
               variant="ghost"
               size="icon"
               onClick={() =>
-                window.open("https://linkedin.com/in/stephen-paul-i", "_blank")
+                window.open(
+                  "https://linkedin.com/in/stephen-paul-i",
+                  "_blank"
+                )
               }
               className="rounded-full text-blue-400 hover:text-blue-800"
             >
               <Linkedin className="h-4 w-4" />
             </Button>
+
             <Separator
               orientation="vertical"
               className="h-6 bg-accent-foreground"
             />
-            <>
-              <ModeToggle />
-            </>
+
+            <ModeToggle />
           </Card>
         </div>
 
@@ -109,10 +98,10 @@ const Dashboard = () => {
               subjects={subjects}
               onSubjectsChange={setSubjects}
               onResultsChange={(res) => {
-                setResults(res);
-                setOpen(true);
+                setResults(res)
+                setOpen(true)
               }}
-              uploadButton={<Presets onDone={handlePresetsDone} />}
+              uploadButton={uploadButton}
               presetMode={presetMode}
               parsedSubjects={parsedSubjects}
               parsedHasGrades={parsedHasGrades}
@@ -132,7 +121,5 @@ const Dashboard = () => {
 
       <Toaster />
     </ThemeProvider>
-  );
-};
-
-export default Dashboard;
+  )
+}

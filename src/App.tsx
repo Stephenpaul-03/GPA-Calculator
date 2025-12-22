@@ -1,5 +1,5 @@
 // src/App.tsx
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./containers/dashboard.container";
 
 const App = () => {
   return <Dashboard />;
