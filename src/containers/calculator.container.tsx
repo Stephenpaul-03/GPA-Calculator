@@ -75,6 +75,28 @@ export default function Calculator({
     toast("Subjects Cleared")
   }
 
+  const handleClearAll = () => {
+    setAlertConfig({
+      title: "Clear all subjects?",
+      description:
+        "This will remove all subjects and reset the calculator. This action cannot be undone.",
+      actions: [
+        {
+          label: "Cancel",
+          onClick: () => setAlertConfig(null),
+        },
+        {
+          label: "Clear All",
+          variant: "destructive",
+          onClick: () => {
+            onClear()
+            setAlertConfig(null)
+          },
+        },
+      ],
+    })
+  }
+
   const onApplySemesters = () => {
     if (!selectedSemesters.length) {
       toast("Select at least one semester to apply.")
@@ -112,7 +134,7 @@ export default function Calculator({
       onDelete={onDelete}
       onUpdate={onUpdate}
       onCalculate={onCalculate}
-      onClear={onClear}
+      onClear={handleClearAll}
       onApplySemesters={onApplySemesters}
       alertConfig={alertConfig}
       setAlertConfig={setAlertConfig}

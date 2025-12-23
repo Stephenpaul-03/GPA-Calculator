@@ -4,7 +4,7 @@
 
 Welcome to **GPA Calculator ** – your go-to tool for calculating GPA/CGPA on a 10-point scale. Built using **React + Vite + TypeScript + TailwindCSS + Shad/cn**, making GPA calculation faster and easier with **Excel sheet presets**.
 
-> Quick tip: How to use the calculator and how GPA is calculated? Check the info **on the site, at the bottom-right of the calculator**. Super handy if you’re new here.
+> Quick tip: How to use the calculator and how GPA is calculated? Check the info **on the site, at the top-right (desktop) or bottom-left (mobile) of the calculator**. Super handy if you’re new here.
 
 You can manually input subject names, credits, and grades, or load them instantly using the Excel preset feature. Multiple semesters? No problem. CGPA? Covered.
 

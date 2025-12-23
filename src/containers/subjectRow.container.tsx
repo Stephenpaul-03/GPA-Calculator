@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { hasRowContent } from "../hooks/use-subjectRow"
-import type { SubjectRowProps } from "../types/subjectRow.types"
+import type { SubjectRowContainerProps } from "../types/subjectRow.types"
 import { SubjectRowView } from "../views/subjectRow.view"
 
 export default function SubjectRow({
@@ -10,7 +10,7 @@ export default function SubjectRow({
   subject,
   updateSubject,
   deleteSubject,
-}: SubjectRowProps) {
+}: SubjectRowContainerProps) {
   const [openDelete, setOpenDelete] = useState(false)
   const [deleteMode, setDeleteMode] = useState(false)
   const [dontAskAgain, setDontAskAgain] = useState(false)

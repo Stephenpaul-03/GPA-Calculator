@@ -11,12 +11,15 @@ export interface CalculatorProps {
   parsedHasGrades?: boolean
 }
 
+export type AlertAction = {
+  label: string
+  onClick: () => void
+  variant?: "default" | "destructive"
+}
+
 export type AlertConfig = {
+  kind?: "clear-all" | "generic"
   title: string
   description: string
-  actions: {
-    label: string
-    onClick: () => void
-    variant?: "default" | "destructive"
-  }[]
+  actions: AlertAction[]
 }
