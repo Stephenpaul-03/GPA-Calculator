@@ -8,6 +8,10 @@ html {
   font-size: 16px
 }
 
+@theme {
+  --font-body: "Tomorrow", stiff;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -77,7 +81,7 @@ html {
 /* === Tooltip color themes === */
 
 .tooltip-teal {
-  @apply bg-teal-500 text-white;
+  @apply bg-teal-800 text-white;
 }
 .tooltip-teal svg polygon {
   @apply fill-teal-500;
