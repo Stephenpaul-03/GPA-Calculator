@@ -2,18 +2,15 @@
 
 ## Description
 
-Welcome to **GPA Calculator ** – your go-to tool for calculating GPA/CGPA on a 10-point scale. Built using **React + Vite + TypeScript + TailwindCSS + Shad/cn**, making GPA calculation faster and easier with **Excel sheet presets**.
+Welcome to **GPA Calculator** – your go-to tool for calculating GPA/CGPA on a 10-point scale. Built using **React + Vite + TypeScript + TailwindCSS + Shad/cn**, making GPA calculation faster and easier with **Excel sheet presets**.
 
-> Quick tip: How to use the calculator and how GPA is calculated? Check the info **on the site, at the top-right (desktop) or bottom-left (mobile) of the calculator**. Super handy if you’re new here.
+> Quick tip: How to use the calculator and how GPA is calculated? Check the info **on the site, at the top-right (desktop) or bottom-left (mobile) of the calculator**. Super handy if you’re new here.(spotlight guide is cooking up btw)
 
 You can manually input subject names, credits, and grades, or load them instantly using the Excel preset feature. Multiple semesters? No problem. CGPA? Covered.
 
-> Mobile support is limited for now and may not work properly until the end of October 2025.
-
-
 ## How GPA is Calculated
 
-We follow the standard 10-point GPA scale:
+The Tool follows the standard 10-point GPA scale:
 
 | Grade | Score |
 | ----- | ----- |
@@ -76,20 +73,15 @@ This version’s Excel feature is a huge time-saver.
 2. Hit calculate.
 3. Enjoy your GPA result.
 
+>Note: Only Credits and Grades are required.
+If subject names are left empty, a placeholder will be added automatically.
+
 ## Export Options
 
 Once your GPA is calculated, you can download it as:
 
 * Excel
 * PDF
-
-(PNGs have been removed; they didn’t fit the workflow well.)
-
-
-## Future Plans
-
-* **Mobile responsiveness improvements** by October-end 2025.
-
 
 ## Contact
 
@@ -102,5 +94,3 @@ Feedback, bugs, or just saying hi:
 ## License
 
 MIT License. Use freely, just don’t blame me if your GPA suddenly looks too good to be true.
-
->Yes.GPA v2 README got a glow up here. Breathe,Champ.
